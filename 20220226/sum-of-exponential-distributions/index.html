@@ -22,21 +22,21 @@
     <meta name="description" content="きっかけ ※どうでも良いという方は読み飛ばしてもらっても結構です。  最近東京に引っ越してきて、改めて東京の人の多さに驚かされている。 出社した日にコンビニで昼食を買おうと思って入店したら、レジには長蛇の列。  「コロナの時代にこんな人混みの中に並ばなきゃいけないなんて...」  こんなご時世だからこそ、人が多くいる場所での滞在時間は1秒でも短くしたいというのが本音だ。  「勤務開始前に予め買って">
 <meta property="og:type" content="article">
 <meta property="og:title" content="コンビニの滞在時間について考える">
-<meta property="og:url" content="http://kogia-sima.github.io/20220226/sum-of-exponential-distributions/index.html">
+<meta property="og:url" content="https://kogia-sima.github.io/20220226/sum-of-exponential-distributions/index.html">
 <meta property="og:site_name" content="Stick Breaker">
 <meta property="og:description" content="きっかけ ※どうでも良いという方は読み飛ばしてもらっても結構です。  最近東京に引っ越してきて、改めて東京の人の多さに驚かされている。 出社した日にコンビニで昼食を買おうと思って入店したら、レジには長蛇の列。  「コロナの時代にこんな人混みの中に並ばなきゃいけないなんて...」  こんなご時世だからこそ、人が多くいる場所での滞在時間は1秒でも短くしたいというのが本音だ。  「勤務開始前に予め買って">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://kogia-sima.github.io/images/hypoexponential.png">
-<meta property="og:image" content="http://kogia-sima.github.io/images/hypoexponential2.png">
+<meta property="og:image" content="https://kogia-sima.github.io/images/hypoexponential.png">
+<meta property="og:image" content="https://kogia-sima.github.io/images/hypoexponential2.png">
 <meta property="article:published_time" content="2022-02-26T22:54:05.000Z">
-<meta property="article:modified_time" content="2022-02-27T08:31:38.454Z">
+<meta property="article:modified_time" content="2022-03-12T14:03:23.124Z">
 <meta property="article:author" content="Ryohei Machida">
-<meta property="article:tag" content="Statistics">
-<meta property="article:tag" content="Data Science">
-<meta property="article:tag" content="Machine Learning">
-<meta property="article:tag" content="Artificial Intelligence">
+<meta property="article:tag" content="確率">
+<meta property="article:tag" content="指数分布">
+<meta property="article:tag" content="待ち行列">
+<meta property="article:tag" content="コンビニ">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://kogia-sima.github.io/images/hypoexponential.png">
+<meta name="twitter:image" content="https://kogia-sima.github.io/images/hypoexponential.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
@@ -441,6 +441,32 @@ mjx-container[display="true"] + br {
             <div class="post-intros">
                 <!-- 文章页标签  -->
                 
+                    <div class= post-intro-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="統計"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                統計
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="確率">確率</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="指数分布">指数分布</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="待ち行列">待ち行列</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="コンビニ">コンビニ</a>
+    
+</div>
+
+                
                 
                     <div class="post-intro-read">
                         <span>Word count: <span class="post-count word-count">1.7k</span>Reading time: <span class="post-count reading-time">6 min</span></span>
@@ -818,16 +844,21 @@ C
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>Author：<a href="http://Kogia-sima.github.io">Ryohei Machida</a>
-            <p>Link：<a href="http://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">http://kogia-sima.github.io/20220226/sum-of-exponential-distributions/</a>
-            <p>Publish date：<a href="http://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">February 26th 2022, 10:54:05 pm</a>
-            <p>Update date：<a href="http://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">February 27th 2022, 8:31:38 am</a>
+            <p>Author：<a href="https://Kogia-sima.github.io">Ryohei Machida</a>
+            <p>Link：<a href="https://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">https://kogia-sima.github.io/20220226/sum-of-exponential-distributions/</a>
+            <p>Publish date：<a href="https://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">February 26th 2022, 10:54:05 pm</a>
+            <p>Update date：<a href="https://kogia-sima.github.io/20220226/sum-of-exponential-distributions/">March 12th 2022, 2:03:23 pm</a>
               <!-- <p>License：当記事のライセンスは<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>に準拠します。</p> -->
         </div>
     
     <!-- paginator -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/20220312/actix-basic-auth/" title="Rust (actix-web) でBasic認証を実装する">
+                    <div class="nextTitle">Rust (actix-web) でBasic認証を実装する</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -1009,14 +1040,21 @@ C
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
     
     
     
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 1
+        Total : 2
         </div>
         <!-- search  -->
         
@@ -1032,6 +1070,12 @@ C
             
         
         <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span>
+            <a class="archive-post-title" href="/20220312/actix-basic-auth/">Rust (actix-web) でBasic認証を実装する</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
             <span class="archive-post-date">02/26</span>
             <a class="archive-post-title" href="/20220226/sum-of-exponential-distributions/">コンビニの滞在時間について考える</a>
         </li>
@@ -1041,6 +1085,36 @@ C
 
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="actix-web">
+                <span class="iconfont-archer">&#xe606;</span>
+                actix-web
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="Basic認証">
+                <span class="iconfont-archer">&#xe606;</span>
+                Basic認証
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="確率">
+                <span class="iconfont-archer">&#xe606;</span>
+                確率
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="指数分布">
+                <span class="iconfont-archer">&#xe606;</span>
+                指数分布
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="待ち行列">
+                <span class="iconfont-archer">&#xe606;</span>
+                待ち行列
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="コンビニ">
+                <span class="iconfont-archer">&#xe606;</span>
+                コンビニ
+            </span>
         
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1052,6 +1126,16 @@ C
 
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Rust">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Rust
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="統計">
+            <span class="iconfont-archer">&#xe60a;</span>
+            統計
+        </span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
@@ -1068,7 +1152,7 @@ C
         siteMetaRoot = '/'
     }
     var siteMeta = {
-        url: "http://Kogia-sima.github.io",
+        url: "https://Kogia-sima.github.io",
         root: siteMetaRoot,
         author: "Ryohei Machida"
     }

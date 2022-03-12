@@ -21,7 +21,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Stick Breaker">
-<meta property="og:url" content="https://kogia-sima.github.io/archives/2022/02/index.html">
+<meta property="og:url" content="https://kogia-sima.github.io/categories/Rust/index.html">
 <meta property="og:site_name" content="Stick Breaker">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="Ryohei Machida">
@@ -432,33 +432,29 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/20220226/sum-of-exponential-distributions/">
+            <a class="abstract-title" href="/20220312/actix-basic-auth/">
                 
-                <span class="abstract-title-text">コンビニの滞在時間について考える</span>
+                <span class="abstract-title-text">Rust (actix-web) でBasic認証を実装する</span>
             </a>
             <div class="abstract-content">
-                きっかけ
-※どうでも良いという方は読み飛ばしてもらっても結構です。
+                背景
+Actix-webでBasic認証を実装しようとしたけど情報があまり出てこなかったのでメモ
+Basic認証とは？
+Mozillaの説明が非常に分かりやすいのでそちらを参照するのが良いと思われます。。
+簡単に言うと、クライアントがユーザ名とパスワードをBase64エンコードして送信し、サーバがそれをデコードしてパスワードを比較するという認証方法です。
 
-最近東京に引っ越してきて、改めて東京の人の多さに驚かされている。
-出社した日にコンビニで昼食を買おうと思って入店したら、レジには長蛇の列。
-
-「コロナの時代にこんな人混みの中に並ばなきゃいけないなんて...」
-
-こんなご時世だからこそ、人が多くいる場所での滞在時間は1秒でも短くしたいというのが本音だ。
-
-「勤務開始前に予め買っておけばいいじゃん。」
-
-確かにそれも一理あるのだが、自分としては新鮮で温かいアメリカンドックとコーヒーが欲しいのだ。
-会社の電子レンジが壊れているから、温め直すこともできない。
-そんな訳で、昼食...
+パスワードが暗号化されないので、セキュリティ的にはあまり好ましい認証方式ではありません。
+クライアント側がBasic認証しか対応していないなど特別な場合を除き、より安全な認証方式を用いるべきです。
+実装
+まず基本的なサーバを作る
+まず...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2022/03/12">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/02/26</span>
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/03/12</span>
                 </div>
                 <!-- tags -->
                 
@@ -469,21 +465,17 @@
             
         
         
-        <span class="post-category" data-categories="統計"">
+        <span class="post-category" data-categories="Rust"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                統計
+                Rust
             </span>
         </span>
     
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="確率">確率</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="actix-web">actix-web</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="指数分布">指数分布</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="待ち行列">待ち行列</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="コンビニ">コンビニ</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="Basic認証">Basic認証</a>
     
 </div>
 

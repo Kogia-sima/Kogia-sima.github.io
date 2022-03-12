@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ryohei Machida">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ryohei Machida">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog,Statistics,Data Science,Machine Learning,Artificial Intelligence">
+    
+    <meta name="description" content="">
+    <meta name="description" content="背景 Actix-webでBasic認証を実装しようとしたけど情報があまり出てこなかったのでメモ Basic認証とは？ Mozillaの説明が非常に分かりやすいのでそちらを参照するのが良いと思われます。。 簡単に言うと、クライアントがユーザ名とパスワードをBase64エンコードして送信し、サーバがそれをデコードしてパスワードを比較するという認証方法です。  パスワードが暗号化されないので、セキュリ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust (actix-web) でBasic認証を実装する">
+<meta property="og:url" content="https://kogia-sima.github.io/20220312/actix-basic-auth/index.html">
+<meta property="og:site_name" content="Stick Breaker">
+<meta property="og:description" content="背景 Actix-webでBasic認証を実装しようとしたけど情報があまり出てこなかったのでメモ Basic認証とは？ Mozillaの説明が非常に分かりやすいのでそちらを参照するのが良いと思われます。。 簡単に言うと、クライアントがユーザ名とパスワードをBase64エンコードして送信し、サーバがそれをデコードしてパスワードを比較するという認証方法です。  パスワードが暗号化されないので、セキュリ">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-03-12T21:41:57.000Z">
+<meta property="article:modified_time" content="2022-03-12T14:03:23.124Z">
+<meta property="article:author" content="Ryohei Machida">
+<meta property="article:tag" content="actix-web">
+<meta property="article:tag" content="Basic認証">
+<meta name="twitter:card" content="summary">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>Rust (actix-web) でBasic認証を実装する · Stick Breaker</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211217" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211217" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211217" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211217" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211217" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>Stick Breaker</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">Stick Breaker</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">Rust (actix-web) でBasic認証を実装する</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                Rust (actix-web) でBasic認証を実装する
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Rust"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Rust
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="actix-web">actix-web</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Basic認証">Basic認証</a>
+    
+</div>
+
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">712</span>Reading time: <span class="post-count reading-time">3 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2022/03/12</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="背景">背景</h1>
+<p>Actix-webでBasic認証を実装しようとしたけど情報があまり出てこなかったのでメモ</p>
+<h1 id="basic認証とは">Basic認証とは？</h1>
+<p><a href="https://developer.mozilla.org/ja/docs/Web/HTTP/Authentication">Mozillaの説明</a>が非常に分かりやすいのでそちらを参照するのが良いと思われます。。</p>
+<p>簡単に言うと、クライアントがユーザ名とパスワードをBase64エンコードして送信し、サーバがそれをデコードしてパスワードを比較するという認証方法です。</p>
+<p><br></p>
+<p>パスワードが暗号化されないので、セキュリティ的にはあまり好ましい認証方式ではありません。</p>
+<p>クライアント側がBasic認証しか対応していないなど特別な場合を除き、より安全な認証方式を用いるべきです。</p>
+<h1 id="実装">実装</h1>
+<h2 id="まず基本的なサーバを作る">まず基本的なサーバを作る</h2>
+<p>まずは<a href="https://github.com/actix/actix-web#example">Actix-webのREADME</a>を参考に、基本的なHTTPサーバを実装します。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> actix_web::&#123;get, App, HttpServer&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[get(<span class="string">&quot;/&quot;</span>)]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">greet</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;Hello world!&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[actix_web::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> std::io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    HttpServer::<span class="title function_ invoke__">new</span>(|| &#123;</span><br><span class="line">        App::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">service</span>(greet)</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_ invoke__">bind</span>((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8080</span>))?</span><br><span class="line">    .<span class="title function_ invoke__">run</span>()</span><br><span class="line">    .<span class="keyword">await</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>このプログラムを動かして、<a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a>にアクセスしてみると、"Hello, world!"と表示されると思います。</p>
+<h2 id="basic認証を行う">Basic認証を行う</h2>
+<p>Actix-webでBasic認証を行うには、<a href="https://docs.rs/actix-web-httpauth/latest/actix_web_httpauth/index.html">actix_web_httpauth</a>を使用します。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> actix_web::&#123;get, App, HttpServer&#125;;</span><br><span class="line"><span class="keyword">use</span> actix_web_httpauth::extractors::basic::&#123;BasicAuth, Config&#125;;</span><br><span class="line"><span class="keyword">use</span> actix_web_httpauth::extractors::AuthenticationError;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[get(<span class="string">&quot;/&quot;</span>)]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">greet</span>(auth: BasicAuth) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">String</span>, Error&gt; &#123;</span><br><span class="line">    <span class="comment">// クライアントから渡されたユーザ名とパスワードを取得する</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user</span> = auth.<span class="title function_ invoke__">user_id</span>().<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">password</span> = <span class="keyword">match</span> auth.<span class="title function_ invoke__">password</span>() &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(p) =&gt; p.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">trim</span>(),</span><br><span class="line">        <span class="literal">None</span> =&gt; <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ユーザ名とパスワードが正しくない場合、401 Unauthorizedを返す</span></span><br><span class="line">    <span class="keyword">if</span> user != <span class="string">&quot;foo&quot;</span> || password != <span class="string">&quot;bar&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(AuthenticationError::<span class="title function_ invoke__">from</span>(Config::<span class="title function_ invoke__">default</span>()).<span class="title function_ invoke__">into</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;Hello, &#123;user&#125;!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>アプリケーション全体、または特定のスコープ全体にBasic認証を設けたい場合は、<a href="https://docs.rs/actix-web-httpauth/latest/actix_web_httpauth/middleware/struct.HttpAuthentication.html">HttpAuthentication</a>というミドルウェアが便利です。</p>
+<p>（参考：<a href="https://turreta.com/2020/06/07/actix-web-basic-and-bearer-authentication-examples/">https://turreta.com/2020/06/07/actix-web-basic-and-bearer-authentication-examples/</a>）</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> actix_web::dev::ServiceRequest;</span><br><span class="line"><span class="keyword">use</span> actix_web::&#123;get, App, Error, HttpServer&#125;;</span><br><span class="line"><span class="keyword">use</span> actix_web_httpauth::extractors::basic::&#123;BasicAuth, Config&#125;;</span><br><span class="line"><span class="keyword">use</span> actix_web_httpauth::extractors::AuthenticationError;</span><br><span class="line"><span class="keyword">use</span> actix_web_httpauth::middleware::HttpAuthentication;</span><br><span class="line"></span><br><span class="line"><span class="comment">// スコープ内のすべてのリクエストに対して実行される認証用の関数</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">validator</span>(req: ServiceRequest, auth: BasicAuth) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;ServiceRequest, Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user</span> = auth.<span class="title function_ invoke__">user_id</span>().<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">password</span> = <span class="keyword">match</span> auth.<span class="title function_ invoke__">password</span>() &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(p) =&gt; p.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">trim</span>(),</span><br><span class="line">        <span class="literal">None</span> =&gt; <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> user == <span class="string">&quot;foo&quot;</span> &amp;&amp; password == <span class="string">&quot;bar&quot;</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(req)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(AuthenticationError::<span class="title function_ invoke__">from</span>(Config::<span class="title function_ invoke__">default</span>()).<span class="title function_ invoke__">into</span>())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[get(<span class="string">&quot;/&quot;</span>)]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">greet</span>(auth: BasicAuth) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">String</span>, Error&gt; &#123;</span><br><span class="line">    <span class="comment">// 認証情報が欲しいときは引数にBasicAuthを指定すれば良い</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user</span> = auth.<span class="title function_ invoke__">user_id</span>().<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;Hello, &#123;user&#125;&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#[actix_web::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> std::io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    HttpServer::<span class="title function_ invoke__">new</span>(|| &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">auth</span> = HttpAuthentication::<span class="title function_ invoke__">basic</span>(validator);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// wrap()メソッドでミドルウェアをスコープ全体に適用</span></span><br><span class="line">        App::<span class="title function_ invoke__">new</span>()</span><br><span class="line">            .<span class="title function_ invoke__">wrap</span>(auth)</span><br><span class="line">            .<span class="title function_ invoke__">service</span>(greet)</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_ invoke__">bind</span>((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8080</span>))?</span><br><span class="line">    .<span class="title function_ invoke__">run</span>()</span><br><span class="line">    .<span class="keyword">await</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="realmを指定する">realmを指定する</h2>
+<p>上記のプログラムの場合、ユーザ名とパスワードのフォームに表示されるメッセージ（realm）は指定されていません。</p>
+<p>この場合、メッセージの内容はクライアント依存（多くの場合メッセージなし）になります。</p>
+<p><br></p>
+<p>メッセージの内容を変更したい場合は、<a href="https://docs.rs/actix-web-httpauth/latest/actix_web_httpauth/extractors/basic/struct.Config.html#method.realm">Config::realm()メソッド</a>を使用します。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">validator</span>(req: ServiceRequest, credentials: BasicAuth) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;ServiceRequest, Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user</span> = auth.<span class="title function_ invoke__">user_id</span>().<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">password</span> = <span class="keyword">match</span> auth.<span class="title function_ invoke__">password</span>() &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(p) =&gt; p.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">trim</span>(),</span><br><span class="line">        <span class="literal">None</span> =&gt; <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> user == <span class="string">&quot;foo&quot;</span> &amp;&amp; password == <span class="string">&quot;bar&quot;</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(req)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// realmを指定</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">config</span> = Config::<span class="title function_ invoke__">default</span>().<span class="title function_ invoke__">realm</span>(<span class="string">&quot;ユーザ名とパスワードを入力してください。&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(AuthenticationError::<span class="title function_ invoke__">from</span>(config).<span class="title function_ invoke__">into</span>())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="最後に">最後に</h1>
+<p>最初の方にも述べましたが、Basic認証はセキュリティ上好ましくない認証方式です。</p>
+<p>以下のような認証方式が使用可能な場合は、そちらを実装することを推奨します。</p>
+<ul>
+<li>bcrypt暗号化に基づくフォーム認証</li>
+<li>APIトークンを使用したBearer認証（いわゆる「JWT認証」などもこれに含まれる）</li>
+<li>事前のアクセストークン発行に基づくOAuth認証</li>
+<li>デバイス認証</li>
+<li>MFA (多要素認証)</li>
+</ul>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>Author：<a href="https://Kogia-sima.github.io">Ryohei Machida</a>
+            <p>Link：<a href="https://kogia-sima.github.io/20220312/actix-basic-auth/">https://kogia-sima.github.io/20220312/actix-basic-auth/</a>
+            <p>Publish date：<a href="https://kogia-sima.github.io/20220312/actix-basic-auth/">March 12th 2022, 9:41:57 pm</a>
+            <p>Update date：<a href="https://kogia-sima.github.io/20220312/actix-basic-auth/">March 12th 2022, 2:03:23 pm</a>
+              <!-- <p>License：当記事のライセンスは<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>に準拠します。</p> -->
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/20220226/sum-of-exponential-distributions/" title="コンビニの滞在時間について考える">
+                    <div class="prevTitle">コンビニの滞在時間について考える</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+        <script>
+            (function () {
+                const time = document.getElementsByClassName('post-intro-time')[0]
+                const post = document.getElementsByTagName("article")[0]
+                if (time === undefined || post === undefined) {
+                    return
+                }
+
+                const pubTime = new Date(time.innerText)
+                const now = Date.now()
+                const interval = parseInt(now - pubTime)
+                const years = parseInt(interval / 31536000000)
+                const outdated_threshold = parseInt(1)
+                if (interval > outdated_threshold * 365 * 24 * 3600 * 1000) {
+                    post.innerHTML = '<div class="note note-warning">' +
+                    `<p>この記事は最終更新日から ${years} 年以上が経過しています。` +
+                    '</p></div>' + post.innerHTML;
+                }
+            })();
+        </script>
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:orcinus4627@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/Kogia-sima" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//www.linkedin.com/in/ryohei-machida-371025233/" class="iconfont-archer linkedin" target="_blank" title=linkedin></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#basic%E8%AA%8D%E8%A8%BC%E3%81%A8%E3%81%AF"><span class="toc-number">2.</span> <span class="toc-text">Basic認証とは？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9F%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">実装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%9A%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E3%82%B5%E3%83%BC%E3%83%90%E3%82%92%E4%BD%9C%E3%82%8B"><span class="toc-number">3.1.</span> <span class="toc-text">まず基本的なサーバを作る</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#basic%E8%AA%8D%E8%A8%BC%E3%82%92%E8%A1%8C%E3%81%86"><span class="toc-number">3.2.</span> <span class="toc-text">Basic認証を行う</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#realm%E3%82%92%E6%8C%87%E5%AE%9A%E3%81%99%E3%82%8B"><span class="toc-number">3.3.</span> <span class="toc-text">realmを指定する</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%80%E5%BE%8C%E3%81%AB"><span class="toc-number">4.</span> <span class="toc-text">最後に</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span>
+            <a class="archive-post-title" href="/20220312/actix-basic-auth/">Rust (actix-web) でBasic認証を実装する</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span>
+            <a class="archive-post-title" href="/20220226/sum-of-exponential-distributions/">コンビニの滞在時間について考える</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="actix-web">
+                <span class="iconfont-archer">&#xe606;</span>
+                actix-web
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="Basic認証">
+                <span class="iconfont-archer">&#xe606;</span>
+                Basic認証
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="確率">
+                <span class="iconfont-archer">&#xe606;</span>
+                確率
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="指数分布">
+                <span class="iconfont-archer">&#xe606;</span>
+                指数分布
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="待ち行列">
+                <span class="iconfont-archer">&#xe606;</span>
+                待ち行列
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="コンビニ">
+                <span class="iconfont-archer">&#xe606;</span>
+                コンビニ
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Rust">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Rust
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="統計">
+            <span class="iconfont-archer">&#xe60a;</span>
+            統計
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://Kogia-sima.github.io",
+        root: siteMetaRoot,
+        author: "Ryohei Machida"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211217"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211217"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211217" async></script>
+        
+        <!-- mermaid -->
+        
+            <script src='https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js'></script>
+            <script>
+                if (window.mermaid) {
+                    mermaid.initialize({theme: 'dark'});
+                }
+            </script>
+        
+    </body>
+</html>
