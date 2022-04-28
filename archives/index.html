@@ -432,6 +432,63 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/20220428/bash-ps1-glitch/">
+                
+                <span class="abstract-title-text">Bashのプロンプトが64文字の時だけバグる</span>
+            </a>
+            <div class="abstract-content">
+                TL;DR
+それはいつものようにコーディングに取り掛かろうとした矢先のことでした。
+Video
+私のシェルもついに反抗期を迎えたようです。
+プロンプトの表示が突然おかしくなり、改行もされなくなってしまいました。
+事象
+プロンプトはpowerlineっぽい表示ですが、このプロンプトを生成するコマンドはRustで自作しています。
+問題なのは、このプロンプトが特定の文字数になった時だけバグが起きてしまうということです。
+つまり、プロンプトの表示幅が64文字になった時にだけこのような現象が生じたということです。
+
+なので、例えばブランチ名を1文字だけ増やしたり減らしてみたりすると、この現象は解消...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/04/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/04/28</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Linux"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Linux
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="bash">bash</a>
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/20220312/actix-basic-auth/">
                 
                 <span class="abstract-title-text">Rust (actix-web) でBasic認証を実装する</span>
@@ -453,7 +510,7 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/03/12">
+                <div class="abstract-date" title="Last updated: 2022/04/28">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/03/12</span>
                 </div>
                 <!-- tags -->
@@ -516,7 +573,7 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/03/12">
+                <div class="abstract-date" title="Last updated: 2022/04/28">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/02/26</span>
                 </div>
                 <!-- tags -->
@@ -661,7 +718,16 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
+        
+        
         
         
     
@@ -670,7 +736,7 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 2
+        Total : 3
         </div>
         <!-- search  -->
         
@@ -684,6 +750,12 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/28</span>
+            <a class="archive-post-title" href="/20220428/bash-ps1-glitch/">Bashのプロンプトが64文字の時だけバグる</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">03/12</span>
@@ -710,6 +782,11 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
             <span class="sidebar-tag-name" data-tags="Basic認証">
                 <span class="iconfont-archer">&#xe606;</span>
                 Basic認証
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="bash">
+                <span class="iconfont-archer">&#xe606;</span>
+                bash
             </span>
         
             <span class="sidebar-tag-name" data-tags="確率">
@@ -746,6 +823,11 @@ Mozillaの説明が非常に分かりやすいのでそちらを参照するの�
         <span class="sidebar-category-name" data-categories="Rust">
             <span class="iconfont-archer">&#xe60a;</span>
             Rust
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
         </span>
     
         <span class="sidebar-category-name" data-categories="統計">

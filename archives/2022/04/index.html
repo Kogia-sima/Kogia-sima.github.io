@@ -21,7 +21,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Stick Breaker">
-<meta property="og:url" content="https://kogia-sima.github.io/keywords/%E6%8C%87%E6%95%B0%E5%88%86%E5%B8%83/index.html">
+<meta property="og:url" content="https://kogia-sima.github.io/archives/2022/04/index.html">
 <meta property="og:site_name" content="Stick Breaker">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="Ryohei Machida">
@@ -432,33 +432,29 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/20220226/sum-of-exponential-distributions/">
+            <a class="abstract-title" href="/20220428/bash-ps1-glitch/">
                 
-                <span class="abstract-title-text">コンビニの滞在時間について考える</span>
+                <span class="abstract-title-text">Bashのプロンプトが64文字の時だけバグる</span>
             </a>
             <div class="abstract-content">
-                きっかけ
-※どうでも良いという方は読み飛ばしてもらっても結構です。
+                TL;DR
+それはいつものようにコーディングに取り掛かろうとした矢先のことでした。
+Video
+私のシェルもついに反抗期を迎えたようです。
+プロンプトの表示が突然おかしくなり、改行もされなくなってしまいました。
+事象
+プロンプトはpowerlineっぽい表示ですが、このプロンプトを生成するコマンドはRustで自作しています。
+問題なのは、このプロンプトが特定の文字数になった時だけバグが起きてしまうということです。
+つまり、プロンプトの表示幅が64文字になった時にだけこのような現象が生じたということです。
 
-最近東京に引っ越してきて、改めて東京の人の多さに驚かされている。
-出社した日にコンビニで昼食を買おうと思って入店したら、レジには長蛇の列。
-
-「コロナの時代にこんな人混みの中に並ばなきゃいけないなんて...」
-
-こんなご時世だからこそ、人が多くいる場所での滞在時間は1秒でも短くしたいというのが本音だ。
-
-「勤務開始前に予め買っておけばいいじゃん。」
-
-確かにそれも一理あるのだが、自分としては新鮮で温かいアメリカンドックとコーヒーが欲しいのだ。
-会社の電子レンジが壊れているから、温め直すこともできない。
-そんな訳で、昼食...
+なので、例えばブランチ名を1文字だけ増やしたり減らしてみたりすると、この現象は解消...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2022/04/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/02/26</span>
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/04/28</span>
                 </div>
                 <!-- tags -->
                 
@@ -469,21 +465,15 @@
             
         
         
-        <span class="post-category" data-categories="統計"">
+        <span class="post-category" data-categories="Linux"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                統計
+                Linux
             </span>
         </span>
     
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="確率">確率</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="指数分布">指数分布</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="待ち行列">待ち行列</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="コンビニ">コンビニ</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="bash">bash</a>
     
 </div>
 
